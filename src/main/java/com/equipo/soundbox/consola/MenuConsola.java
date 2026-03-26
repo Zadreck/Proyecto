@@ -1,20 +1,21 @@
 package com.equipo.soundbox.consola;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
 import com.equipo.soundbox.colecciones.GestorAlbumes;
 import com.equipo.soundbox.modelo.Album;
 import com.equipo.soundbox.modelo.AlbumDigital;
 import com.equipo.soundbox.modelo.AlbumFisico;
 import com.equipo.soundbox.persistencia.GestorFicheros;
 
-import java.util.List;
-import java.util.Scanner;
-
 /**
  * Menú de consola principal de SoundBox.
  * Gestiona la interacción con el usuario mediante printf formateado.
  *
  * @author José y Ruben
- * @version 1.0
+ * @version 2.0
  */
 public class MenuConsola {
 
@@ -40,15 +41,19 @@ public class MenuConsola {
     public void mostrarMenu() {
         System.out.println();
         System.out.printf("       SOUNDBOX  v2.0         %n");
-        System.out.printf("  %-3s %-25s |%n", "1.", "Añadir álbum");
-        System.out.printf("  %-3s %-25s |%n", "2.", "Listar todos");
-        System.out.printf("  %-3s %-25s |%n", "3.", "Buscar por artista");
-        System.out.printf("  %-3s %-25s |%n", "4.", "Filtrar por tipo");
-        System.out.printf("  %-3s %-25s |%n", "5.", "Eliminar álbum");
-        System.out.printf("  %-3s %-25s |%n", "6.", "Ver mejor valorado");
-        System.out.printf("  %-3s %-25s |%n", "7.", "Puntuar álbum");
-        System.out.printf("  %-3s %-25s |%n", "8.", "Exportar JSON");
-        System.out.printf("  %-3s %-25s |%n", "9.", "Guardar y salir");
+        System.out.printf("  %-4s %-25s%n", "1.", "Añadir álbum");
+        System.out.printf("  %-4s %-25s%n", "2.", "Listar todos");
+        System.out.printf("  %-4s %-25s%n", "3.", "Buscar por artista");
+        System.out.printf("  %-4s %-25s%n", "4.", "Filtrar por tipo");
+        System.out.printf("  %-4s %-25s%n", "5.", "Eliminar álbum");
+        System.out.printf("  %-4s %-25s%n", "6.", "Ver mejor valorado");
+        System.out.printf("  %-4s %-25s%n", "7.", "Puntuar álbum");
+        System.out.printf("  %-4s %-25s%n", "8.", "Ordenar por título");
+        System.out.printf("  %-4s %-25s%n", "9.", "Agrupar por artista");
+        System.out.printf("  %-4s %-25s%n", "10.", "Media puntuaciones");
+        System.out.printf("  %-4s %-25s%n", "11.", "Exportar JSON");
+        System.out.printf("  %-4s %-25s%n", "12.", "Importar JSON");
+        System.out.printf("  %-4s %-25s%n", "13.", "Guardar y salir");
         System.out.print("  Opción: ");
     }
 
@@ -62,18 +67,22 @@ public class MenuConsola {
             mostrarMenu();
             opcion = leerEntero();
             switch (opcion) {
-                case 1 -> añadirAlbum();
-                case 2 -> listarTodos();
-                case 3 -> buscarPorArtista();
-                case 4 -> filtrarPorTipo();
-                case 5 -> eliminarAlbum();
-                case 6 -> verMejorValorado();
-                case 7 -> puntuarAlbum();
-                case 8 -> exportarJSON();
-                case 9 -> guardarYSalir();
+                case 1  -> añadirAlbum();
+                case 2  -> listarTodos();
+                case 3  -> buscarPorArtista();
+                case 4  -> filtrarPorTipo();
+                case 5  -> eliminarAlbum();
+                case 6  -> verMejorValorado();
+                case 7  -> puntuarAlbum();
+                case 8  -> mostrarOrdenadosPorTitulo();
+                case 9  -> mostrarAgrupadosPorArtista();
+                case 10 -> mostrarMediaPuntuaciones();
+                case 11 -> exportarJSON();
+                case 12 -> importarJSON();
+                case 13 -> guardarYSalir();
                 default -> System.out.println("  Opción no válida.");
             }
-        } while (opcion != 9);
+        } while (opcion != 13);
     }
 
     /**
@@ -94,6 +103,8 @@ public class MenuConsola {
         int tipo = leerEntero();
 
         try {
+            Album album = null;
+
             if (tipo == 1) {
                 System.out.print("Formato (CD/Vinilo/Cassette): ");
                 String formato = sc.nextLine();
@@ -101,15 +112,25 @@ public class MenuConsola {
                     throw new IllegalArgumentException("Formato no válido");
                 System.out.print("Número de discos: ");
                 int discos = leerEntero();
-                gestor.añadir(new AlbumFisico(titulo, artista, año, formato, discos));
-            } else {
+                album = new AlbumFisico(titulo, artista, año, formato, discos);
+            } else if (tipo == 2) {
                 System.out.print("Plataforma: ");
                 String plataforma = sc.nextLine();
                 System.out.print("Bitrate (128/192/256/320): ");
                 int bitrate = leerEntero();
-                gestor.añadir(new AlbumDigital(titulo, artista, año, plataforma, bitrate));
+                album = new AlbumDigital(titulo, artista, año, plataforma, bitrate);
+            } else {
+                System.out.println("  Tipo no válido.");
+                return;
             }
+
+            System.out.print("Puntuación (0.0 - 10.0): ");
+            double puntuacion = leerDouble();
+            album.setPuntuacion(puntuacion);
+
+            gestor.añadir(album);
             System.out.println("  Álbum añadido correctamente.");
+
         } catch (IllegalArgumentException e) {
             System.out.println("  Error: " + e.getMessage());
         }
@@ -133,7 +154,7 @@ public class MenuConsola {
     }
 
     /**
-     * Busca álbumes por artista.
+     * Busca álbumes por artista usando el HashMap.
      */
     private void buscarPorArtista() {
         System.out.print("\nArtista a buscar: ");
@@ -147,7 +168,7 @@ public class MenuConsola {
     }
 
     /**
-     * Filtra álbumes por tipo (Físico o Digital).
+     * Filtra álbumes por tipo usando Stream filter.
      */
     private void filtrarPorTipo() {
         System.out.print("\nTipo (Físico/Digital): ");
@@ -161,7 +182,7 @@ public class MenuConsola {
     }
 
     /**
-     * Elimina un álbum por título.
+     * Elimina un álbum por título usando Iterator explícito.
      */
     private void eliminarAlbum() {
         System.out.print("\nTítulo a eliminar: ");
@@ -183,12 +204,134 @@ public class MenuConsola {
     }
 
     /**
+     * Puntúa un álbum del catálogo.
+     */
+    private void puntuarAlbum() {
+        System.out.println();
+        listarTodos();
+        System.out.print("\nTítulo del álbum a puntuar: ");
+        String titulo = sc.nextLine();
+
+        Album album = gestor.getCatalogo().stream()
+                .filter(a -> a.getTitulo().equalsIgnoreCase(titulo))
+                .findFirst()
+                .orElse(null);
+
+        if (album == null) {
+            System.out.println("  Álbum no encontrado.");
+            return;
+        }
+
+        System.out.print("Puntuación (0.0 - 10.0): ");
+        double puntuacion = leerDouble();
+
+        try {
+            album.setPuntuacion(puntuacion);
+            System.out.println("  Puntuación asignada correctamente.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("  Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Muestra los álbumes ordenados por título usando Stream sorted.
+     */
+    private void mostrarOrdenadosPorTitulo() {
+        System.out.println("\n── Álbumes ordenados por título ──");
+        List<Album> ordenados = gestor.ordenarPorTitulo();
+        if (ordenados.isEmpty()) {
+            System.out.println("  El catálogo está vacío.");
+            return;
+        }
+        ordenados.forEach(a -> System.out.printf("  %-30s %-20s %-5.1f%n",
+                a.getTitulo(), a.getArtista(), a.getPuntuacion()));
+    }
+
+    /**
+     * Muestra los álbumes agrupados por artista usando Stream groupingBy.
+     */
+    private void mostrarAgrupadosPorArtista() {
+        System.out.println("\n── Álbumes agrupados por artista ──");
+        Map<String, List<Album>> grupos = gestor.agruparPorArtista();
+        if (grupos.isEmpty()) {
+            System.out.println("  El catálogo está vacío.");
+            return;
+        }
+        grupos.forEach((artista, albums) -> {
+            System.out.println("  " + artista + ":");
+            albums.forEach(a -> System.out.println("    - " + a.getTitulo()));
+        });
+    }
+
+    /**
+     * Muestra la media de puntuaciones usando Stream averagingDouble.
+     */
+    private void mostrarMediaPuntuaciones() {
+        if (gestor.getCatalogo().isEmpty()) {
+            System.out.println("  El catálogo está vacío.");
+            return;
+        }
+        System.out.printf("%n  Media de puntuaciones: %.2f%n",
+                gestor.mediaPuntuaciones());
+    }
+
+    /**
      * Exporta el catálogo a JSON y lo guarda en fichero.
      */
     private void exportarJSON() {
         String json = gestor.exportarJSON();
         ficheros.exportarJSON(json, "datos/catalogo.json");
         System.out.println("  JSON exportado a datos/catalogo.json");
+    }
+
+    /**
+     * Importa álbumes desde un fichero JSON.
+     */
+    private void importarJSON() {
+        System.out.print("\n  Ruta del fichero JSON a importar: ");
+        String rutaJSON = sc.nextLine().trim();
+
+        if (rutaJSON.isBlank()) {
+            System.out.println("  Ruta inválida.");
+            return;
+        }
+
+        List<Album> albumsImportados = ficheros.cargarJSON(rutaJSON);
+
+        if (albumsImportados.isEmpty()) {
+            System.out.println("  No se pudieron cargar álbumes del JSON.");
+            return;
+        }
+
+        // Preguntar si desea agregar o reemplazar
+        System.out.printf("  Se encontraron %d álbumes.%n", albumsImportados.size());
+        System.out.print("  ¿Desea agregar (1) o reemplazar (2) el catálogo actual?: ");
+        int opcion = leerEntero();
+
+        if (opcion == 1) {
+            // Agregar los nuevos álbumes
+            for (Album album : albumsImportados) {
+                try {
+                    gestor.añadir(album);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("  Aviso: " + album.getTitulo() + " - " + e.getMessage());
+                }
+            }
+            System.out.printf("  %d álbumes agregados correctamente.%n", albumsImportados.size());
+        } else if (opcion == 2) {
+            // Reemplazar el catálogo
+            gestor.getCatalogo().clear();
+            for (Album album : albumsImportados) {
+                try {
+                    gestor.añadir(album);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("  Aviso: " + album.getTitulo() + " - " + e.getMessage());
+                }
+            }
+            System.out.printf("  Catálogo reemplazado con %d álbumes.%n", albumsImportados.size());
+        } else {
+            System.out.println("  Opción no válida.");
+        }
     }
 
     /**
@@ -211,39 +354,9 @@ public class MenuConsola {
     }
 
     /**
-     * Puntúa un álbum del catálogo.
-     */
-    private void puntuarAlbum() {
-        System.out.println();
-        listarTodos();
-        System.out.print("\nTítulo del álbum a puntuar: ");
-        String titulo = sc.nextLine();
-        
-        Album album = gestor.getCatalogo().stream()
-                .filter(a -> a.getTitulo().equalsIgnoreCase(titulo))
-                .findFirst()
-                .orElse(null);
-        
-        if (album == null) {
-            System.out.println("  Álbum no encontrado.");
-            return;
-        }
-        
-        System.out.print("Puntuación (0.0 - 10.0): ");
-        double puntuacion = leerDouble();
-        
-        try {
-            album.setPuntuacion(puntuacion);
-            System.out.println("  Puntuación asignada correctamente.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("  Error: " + e.getMessage());
-        }
-    }
-
-    /**
      * Lee un entero por consola gestionando errores de formato.
      *
-     * @return entero introducido por el usuario
+     * @return entero introducido por el usuario o -1 si hay error
      */
     private int leerEntero() {
         try {
@@ -256,14 +369,14 @@ public class MenuConsola {
     /**
      * Lee un double por consola gestionando errores de formato.
      *
-     * @return double introducido por el usuario
+     * @return double introducido por el usuario o 0.0 si hay error
      */
     private double leerDouble() {
         try {
-            return Double.parseDouble(sc.nextLine().trim());
+            return Double.parseDouble(sc.nextLine().trim().replace(",", "."));
         } catch (NumberFormatException e) {
-            System.out.println("  Valor no válido.");
-            return -1.0;
+            System.out.println("  Valor no válido, se usará 0.0.");
+            return 0.0;
         }
     }
 }

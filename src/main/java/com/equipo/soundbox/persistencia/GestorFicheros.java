@@ -12,6 +12,12 @@ import java.util.List;
 import com.equipo.soundbox.modelo.Album;
 import com.equipo.soundbox.modelo.AlbumDigital;
 import com.equipo.soundbox.modelo.AlbumFisico;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * Gestiona la persistencia de álbumes en ficheros CSV.
@@ -120,6 +126,75 @@ public class GestorFicheros {
             bw.write(json);
         } catch (IOException e) {
             System.out.println("Error al exportar JSON: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Carga los álbumes desde un fichero JSON.
+     * 
+     * @param rutaJSON ruta al fichero JSON
+     * @return lista de álbumes cargados desde JSON
+     */
+    public List<Album> cargarJSON(String rutaJSON) {
+        List<Album> lista = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(rutaJSON))) {
+            JsonElement jsonElement = JsonParser.parseReader(br);
+            
+            if (jsonElement.isJsonArray()) {
+                JsonArray jsonArray = jsonElement.getAsJsonArray();
+                for (JsonElement element : jsonArray) {
+                    Album album = parseAlbumFromJson(element.getAsJsonObject());
+                    if (album != null) {
+                        lista.add(album);
+                    }
+                }
+            } else if (jsonElement.isJsonObject()) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                Album album = parseAlbumFromJson(jsonObject);
+                if (album != null) {
+                    lista.add(album);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error al cargar JSON: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    /**
+     * Convierte un JsonObject a un objeto Album.
+     * 
+     * @param json objeto JSON con datos del álbum
+     * @return Album o null si hay error
+     */
+    private Album parseAlbumFromJson(JsonObject json) {
+        try {
+            String tipo = json.has("tipo") ? json.get("tipo").getAsString() : null;
+            String titulo = json.has("titulo") ? json.get("titulo").getAsString() : "";
+            String artista = json.has("artista") ? json.get("artista").getAsString() : "";
+            int año = json.has("año") ? json.get("año").getAsInt() : 2000;
+            double puntuacion = json.has("puntuacion") ? json.get("puntuacion").getAsDouble() : 0.0;
+
+            Album album = null;
+
+            if ("Fisico".equals(tipo)) {
+                String formato = json.has("formato") ? json.get("formato").getAsString() : "CD";
+                int numDiscos = json.has("numDiscos") ? json.get("numDiscos").getAsInt() : 1;
+                album = new AlbumFisico(titulo, artista, año, formato, numDiscos);
+            } else if ("Digital".equals(tipo)) {
+                String plataforma = json.has("plataforma") ? json.get("plataforma").getAsString() : "Spotify";
+                int bitrate = json.has("bitrate") ? json.get("bitrate").getAsInt() : 128;
+                album = new AlbumDigital(titulo, artista, año, plataforma, bitrate);
+            }
+
+            if (album != null) {
+                album.setPuntuacion(puntuacion);
+            }
+
+            return album;
+        } catch (Exception e) {
+            System.out.println("Error al parsear álbum JSON: " + e.getMessage());
+            return null;
         }
     }
 

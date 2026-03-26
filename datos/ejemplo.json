@@ -1,0 +1,38 @@
+[
+  {
+    "tipo": "Fisico",
+    "titulo": "Dark Side of the Moon",
+    "artista": "Pink Floyd",
+    "año": 1973,
+    "puntuacion": 9.5,
+    "formato": "Vinilo",
+    "numDiscos": 1
+  },
+  {
+    "tipo": "Fisico",
+    "titulo": "Abbey Road",
+    "artista": "The Beatles",
+    "año": 1969,
+    "puntuacion": 9.8,
+    "formato": "CD",
+    "numDiscos": 1
+  },
+  {
+    "tipo": "Digital",
+    "titulo": "Blinding Lights",
+    "artista": "The Weeknd",
+    "año": 2020,
+    "puntuacion": 8.5,
+    "plataforma": "Spotify",
+    "bitrate": 320
+  },
+  {
+    "tipo": "Digital",
+    "titulo": "Levitating",
+    "artista": "Dua Lipa",
+    "año": 2020,
+    "puntuacion": 8.0,
+    "plataforma": "Apple Music",
+    "bitrate": 256
+  }
+]

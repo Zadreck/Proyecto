@@ -78,11 +78,10 @@ public class MenuConsola {
                 case 9  -> mostrarAgrupadosPorArtista();
                 case 10 -> mostrarMediaPuntuaciones();
                 case 11 -> exportarJSON();
-                case 12 -> importarJSON();
-                case 13 -> guardarYSalir();
+                case 12 -> guardarYSalir();
                 default -> System.out.println("  Opción no válida.");
             }
-        } while (opcion != 13);
+        } while (opcion != 12);
     }
 
     /**
@@ -157,15 +156,22 @@ public class MenuConsola {
      * Busca álbumes por artista usando el HashMap.
      */
     private void buscarPorArtista() {
-        System.out.print("\nArtista a buscar: ");
-        String artista = sc.nextLine();
-        List<Album> resultado = gestor.buscarPorArtista(artista);
-        if (resultado.isEmpty()) {
-            System.out.println("  No se encontraron álbumes.");
-        } else {
-            resultado.forEach(a -> System.out.println("  " + a));
-        }
+      System.out.print("\nArtista a buscar: ");
+    String artista = sc.nextLine();
+
+    // Validación con regex — solo letras y espacios
+    if (!validarConRegex(artista, "[a-zA-ZÁÉÍÓÚáéíóúñÑ ]+")) {
+        System.out.println("  El nombre solo puede contener letras y espacios.");
+        return;
     }
+
+    List<Album> resultado = gestor.buscarPorArtista(artista);
+    if (resultado.isEmpty()) {
+        System.out.println("  No se encontraron álbumes.");
+    } else {
+        resultado.forEach(a -> System.out.println("  " + a));
+    }
+}
 
     /**
      * Filtra álbumes por tipo usando Stream filter.
@@ -282,56 +288,6 @@ public class MenuConsola {
         String json = gestor.exportarJSON();
         ficheros.exportarJSON(json, "datos/catalogo.json");
         System.out.println("  JSON exportado a datos/catalogo.json");
-    }
-
-    /**
-     * Importa álbumes desde un fichero JSON.
-     */
-    private void importarJSON() {
-        System.out.print("\n  Ruta del fichero JSON a importar: ");
-        String rutaJSON = sc.nextLine().trim();
-
-        if (rutaJSON.isBlank()) {
-            System.out.println("  Ruta inválida.");
-            return;
-        }
-
-        List<Album> albumsImportados = ficheros.cargarJSON(rutaJSON);
-
-        if (albumsImportados.isEmpty()) {
-            System.out.println("  No se pudieron cargar álbumes del JSON.");
-            return;
-        }
-
-        // Preguntar si desea agregar o reemplazar
-        System.out.printf("  Se encontraron %d álbumes.%n", albumsImportados.size());
-        System.out.print("  ¿Desea agregar (1) o reemplazar (2) el catálogo actual?: ");
-        int opcion = leerEntero();
-
-        if (opcion == 1) {
-            // Agregar los nuevos álbumes
-            for (Album album : albumsImportados) {
-                try {
-                    gestor.añadir(album);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("  Aviso: " + album.getTitulo() + " - " + e.getMessage());
-                }
-            }
-            System.out.printf("  %d álbumes agregados correctamente.%n", albumsImportados.size());
-        } else if (opcion == 2) {
-            // Reemplazar el catálogo
-            gestor.getCatalogo().clear();
-            for (Album album : albumsImportados) {
-                try {
-                    gestor.añadir(album);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("  Aviso: " + album.getTitulo() + " - " + e.getMessage());
-                }
-            }
-            System.out.printf("  Catálogo reemplazado con %d álbumes.%n", albumsImportados.size());
-        } else {
-            System.out.println("  Opción no válida.");
-        }
     }
 
     /**

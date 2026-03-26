@@ -3,11 +3,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.joseruben.spotify</groupId>
-  <artifactId>spotify</artifactId>
+<groupId>com.equipo.soundbox</groupId>
+<artifactId>soundbox</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>spotify</name>
+  <name>soundbox</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
@@ -39,12 +39,6 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
-    </dependency>
-    <!-- Google Gson for JSON processing -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.10.1</version>
     </dependency>
   </dependencies>
 
@@ -93,27 +87,17 @@
       </plugins>
     </pluginManagement>
     <plugins>
-      <!-- Maven Shade Plugin para crear JAR ejecutable con dependencias -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.5.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>com.equipo.soundbox.modelo.Main</mainClass>
-                </transformer>
-              </transformers>
-              <finalName>soundbox</finalName>
-            </configuration>
-          </execution>
-        </executions>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+        <configuration>
+          <finalName>soundbox</finalName>
+          <archive>
+            <manifest>
+              <mainClass>com.equipo.soundbox.modelo.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>

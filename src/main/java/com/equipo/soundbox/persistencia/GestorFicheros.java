@@ -12,12 +12,6 @@ import java.util.List;
 import com.equipo.soundbox.modelo.Album;
 import com.equipo.soundbox.modelo.AlbumDigital;
 import com.equipo.soundbox.modelo.AlbumFisico;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 /**
  * Gestiona la persistencia de álbumes en ficheros CSV.
@@ -131,6 +125,7 @@ public class GestorFicheros {
 
     /**
      * Carga los álbumes desde un fichero JSON.
+     * Parser manual sin dependencias externas.
      * 
      * @param rutaJSON ruta al fichero JSON
      * @return lista de álbumes cargados desde JSON
@@ -138,19 +133,21 @@ public class GestorFicheros {
     public List<Album> cargarJSON(String rutaJSON) {
         List<Album> lista = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(rutaJSON))) {
-            JsonElement jsonElement = JsonParser.parseReader(br);
+            StringBuilder contenido = new StringBuilder();
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                contenido.append(linea);
+            }
             
-            if (jsonElement.isJsonArray()) {
-                JsonArray jsonArray = jsonElement.getAsJsonArray();
-                for (JsonElement element : jsonArray) {
-                    Album album = parseAlbumFromJson(element.getAsJsonObject());
-                    if (album != null) {
-                        lista.add(album);
-                    }
-                }
-            } else if (jsonElement.isJsonObject()) {
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
-                Album album = parseAlbumFromJson(jsonObject);
+            String json = contenido.toString().trim();
+            
+            // Si es un array JSON
+            if (json.startsWith("[")) {
+                lista.addAll(parseJsonArray(json));
+            }
+            // Si es un objeto JSON
+            else if (json.startsWith("{")) {
+                Album album = parseJsonObject(json);
                 if (album != null) {
                     lista.add(album);
                 }
@@ -162,28 +159,67 @@ public class GestorFicheros {
     }
 
     /**
-     * Convierte un JsonObject a un objeto Album.
-     * 
-     * @param json objeto JSON con datos del álbum
-     * @return Album o null si hay error
+     * Parsea un array JSON y retorna lista de álbumes.
      */
-    private Album parseAlbumFromJson(JsonObject json) {
+    private List<Album> parseJsonArray(String json) {
+        List<Album> lista = new ArrayList<>();
+        int inicio = json.indexOf("[") + 1;
+        int fin = json.lastIndexOf("]");
+        
+        if (inicio > 0 && fin > inicio) {
+            String contenido = json.substring(inicio, fin);
+            
+            // Dividir por objetos JSON (buscar { } balanceados)
+            int nivel = 0;
+            int startObj = -1;
+            
+            for (int i = 0; i < contenido.length(); i++) {
+                char c = contenido.charAt(i);
+                
+                if (c == '{') {
+                    if (nivel == 0) startObj = i;
+                    nivel++;
+                } else if (c == '}') {
+                    nivel--;
+                    if (nivel == 0 && startObj >= 0) {
+                        String objeto = contenido.substring(startObj, i + 1);
+                        Album album = parseJsonObject(objeto);
+                        if (album != null) {
+                            lista.add(album);
+                        }
+                        startObj = -1;
+                    }
+                }
+            }
+        }
+        
+        return lista;
+    }
+
+    /**
+     * Parsea un objeto JSON y retorna un Album.
+     */
+    private Album parseJsonObject(String json) {
         try {
-            String tipo = json.has("tipo") ? json.get("tipo").getAsString() : null;
-            String titulo = json.has("titulo") ? json.get("titulo").getAsString() : "";
-            String artista = json.has("artista") ? json.get("artista").getAsString() : "";
-            int año = json.has("año") ? json.get("año").getAsInt() : 2000;
-            double puntuacion = json.has("puntuacion") ? json.get("puntuacion").getAsDouble() : 0.0;
+            String tipo = extraerValor(json, "tipo");
+            String titulo = extraerValor(json, "titulo");
+            String artista = extraerValor(json, "artista");
+            int año = extraerEntero(json, "año");
+            double puntuacion = extraerDouble(json, "puntuacion");
 
             Album album = null;
 
             if ("Fisico".equals(tipo)) {
-                String formato = json.has("formato") ? json.get("formato").getAsString() : "CD";
-                int numDiscos = json.has("numDiscos") ? json.get("numDiscos").getAsInt() : 1;
+                String formato = extraerValor(json, "formato");
+                int numDiscos = extraerEntero(json, "numDiscos");
+                if (formato == null) formato = "CD";
+                if (numDiscos <= 0) numDiscos = 1;
                 album = new AlbumFisico(titulo, artista, año, formato, numDiscos);
             } else if ("Digital".equals(tipo)) {
-                String plataforma = json.has("plataforma") ? json.get("plataforma").getAsString() : "Spotify";
-                int bitrate = json.has("bitrate") ? json.get("bitrate").getAsInt() : 128;
+                String plataforma = extraerValor(json, "plataforma");
+                int bitrate = extraerEntero(json, "bitrate");
+                if (plataforma == null) plataforma = "Spotify";
+                if (bitrate <= 0) bitrate = 128;
                 album = new AlbumDigital(titulo, artista, año, plataforma, bitrate);
             }
 
@@ -196,6 +232,42 @@ public class GestorFicheros {
             System.out.println("Error al parsear álbum JSON: " + e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Extrae un valor String de un JSON.
+     */
+    private String extraerValor(String json, String clave) {
+        String patron = "\"" + clave + "\"\\s*:\\s*\"([^\"]+)\"";
+        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(patron).matcher(json);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
+
+    /**
+     * Extrae un valor entero de un JSON.
+     */
+    private int extraerEntero(String json, String clave) {
+        String patron = "\"" + clave + "\"\\s*:\\s*(\\d+)";
+        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(patron).matcher(json);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+        return 0;
+    }
+
+    /**
+     * Extrae un valor double de un JSON.
+     */
+    private double extraerDouble(String json, String clave) {
+        String patron = "\"" + clave + "\"\\s*:\\s*([\\d.]+)";
+        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(patron).matcher(json);
+        if (matcher.find()) {
+            return Double.parseDouble(matcher.group(1));
+        }
+        return 0.0;
     }
 
     /**

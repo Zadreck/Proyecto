@@ -23,9 +23,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         
         // Pedir ruta al usuario
-        System.out.println("╔════════════════════════════════════════╗");
-        System.out.println("║        Bienvenido a SoundBox v2.0      ║");
-        System.out.println("╚════════════════════════════════════════╝\n");
+        System.out.println("|        Bienvenido a SoundBox v2.0      |");
         
         System.out.print("Introduce la ruta donde guardar los archivos\n(default: datos/catalogo.csv): ");
         String rutaUsuario = sc.nextLine().trim();
@@ -34,7 +32,7 @@ public class Main {
         if (rutaUsuario.isBlank()) {
             rutaUsuario = "datos/catalogo.csv";
         }
-        
+         
         // Asegurar que la ruta acabe en .csv
         if (!rutaUsuario.endsWith(".csv")) {
             rutaUsuario = rutaUsuario + ".csv";

@@ -157,6 +157,22 @@ public class GestorAlbumes {
     }
 
     /**
+     * Importa álbumes desde JSON y los agrega al catálogo.
+     *
+     * @param nuevos lista de álbumes cargados desde JSON
+     */
+    public void importarDesdeJSON(List<Album> nuevos) {
+        for (Album album : nuevos) {
+            if (album != null) {
+                catalogo.add(album);
+                porArtista
+                    .computeIfAbsent(album.getArtista(), k -> new ArrayList<>())
+                    .add(album);
+            }
+        }
+    }
+
+    /**
      * Devuelve el álbum con mayor puntuación de una lista usando método genérico.
      *
      * @param <T>   tipo que extiende Album

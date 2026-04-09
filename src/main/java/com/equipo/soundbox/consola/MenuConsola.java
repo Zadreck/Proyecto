@@ -78,10 +78,11 @@ public class MenuConsola {
                 case 9  -> mostrarAgrupadosPorArtista();
                 case 10 -> mostrarMediaPuntuaciones();
                 case 11 -> exportarJSON();
-                case 12 -> guardarYSalir();
+                case 12 -> importarJSON();
+                case 13 -> guardarYSalir();
                 default -> System.out.println("  Opción no válida.");
             }
-        } while (opcion != 12);
+        } while (opcion != 13);
     }
 
     /**
@@ -288,6 +289,24 @@ public class MenuConsola {
         String json = gestor.exportarJSON();
         ficheros.exportarJSON(json, "datos/catalogo.json");
         System.out.println("  JSON exportado a datos/catalogo.json");
+    }
+
+    /**
+     * Importa álbumes desde un fichero JSON.
+     */
+    private void importarJSON() {
+        System.out.print("\nRuta del fichero JSON (default: datos/catalogo.json): ");
+        String ruta = sc.nextLine().trim();
+        if (ruta.isBlank()) {
+            ruta = "datos/catalogo.json";
+        }
+        List<Album> cargados = ficheros.cargarJSON(ruta);
+        if (cargados.isEmpty()) {
+            System.out.println("  No se cargaron álbumes.");
+        } else {
+            gestor.importarDesdeJSON(cargados);
+            System.out.println("  " + cargados.size() + " álbum(es) importado(s) correctamente.");
+        }
     }
 
     /**

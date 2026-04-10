@@ -51,9 +51,10 @@ public class MenuConsola {
         System.out.printf("  %-4s %-25s%n", "8.", "Ordenar por título");
         System.out.printf("  %-4s %-25s%n", "9.", "Agrupar por artista");
         System.out.printf("  %-4s %-25s%n", "10.", "Media puntuaciones");
-        System.out.printf("  %-4s %-25s%n", "11.", "Exportar JSON");
-        System.out.printf("  %-4s %-25s%n", "12.", "Importar JSON");
-        System.out.printf("  %-4s %-25s%n", "13.", "Guardar y salir");
+        System.out.printf("  %-4s %-25s%n", "11.", "Reproducir álbum");
+        System.out.printf("  %-4s %-25s%n", "12.", "Exportar JSON");
+        System.out.printf("  %-4s %-25s%n", "13.", "Importar JSON");
+        System.out.printf("  %-4s %-25s%n", "14.", "Guardar y salir");
         System.out.print("  Opción: ");
     }
 
@@ -77,12 +78,13 @@ public class MenuConsola {
                 case 8  -> mostrarOrdenadosPorTitulo();
                 case 9  -> mostrarAgrupadosPorArtista();
                 case 10 -> mostrarMediaPuntuaciones();
-                case 11 -> exportarJSON();
-                case 12 -> importarJSON();
-                case 13 -> guardarYSalir();
+                case 11 -> reproducirAlbum();
+                case 12 -> exportarJSON();
+                case 13 -> importarJSON();
+                case 14 -> guardarYSalir();
                 default -> System.out.println("  Opción no válida.");
             }
-        } while (opcion != 13);
+        } while (opcion != 14);
     }
 
     /**
@@ -280,6 +282,36 @@ public class MenuConsola {
         }
         System.out.printf("%n  Media de puntuaciones: %.2f%n",
                 gestor.mediaPuntuaciones());
+    }
+
+    /**
+     * Reproduce un álbum seleccionado por el usuario.
+     * Muestra información de reproducción y duración total.
+     */
+    private void reproducirAlbum() {
+        System.out.println();
+        listarTodos();
+        System.out.print("\nTítulo del álbum a reproducir: ");
+        String titulo = sc.nextLine();
+
+        Album album = gestor.getCatalogo().stream()
+                .filter(a -> a.getTitulo().equalsIgnoreCase(titulo))
+                .findFirst()
+                .orElse(null);
+
+        if (album == null) {
+            System.out.println("  Álbum no encontrado.");
+            return;
+        }
+
+        // Usar la interfaz Reproducible para reproducir
+        System.out.println();
+        album.reproducir();
+        int duracionSegundos = album.getDuracionTotal();
+        int minutos = duracionSegundos / 60;
+        int segundos = duracionSegundos % 60;
+        System.out.printf("  Duración total: %d:%02d%n", minutos, segundos);
+        System.out.printf("  Puntuación: %.1f/10.0%n", album.getPuntuacion());
     }
 
     /**

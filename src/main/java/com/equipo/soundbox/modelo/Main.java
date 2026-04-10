@@ -1,48 +1,48 @@
 package com.equipo.soundbox.modelo;
 
-import java.util.Scanner;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import com.equipo.soundbox.colecciones.GestorAlbumes;
 import com.equipo.soundbox.consola.MenuConsola;
+import com.equipo.soundbox.gui.VentanaPrincipal;
 import com.equipo.soundbox.persistencia.GestorFicheros;
 
 /**
  * Punto de entrada de la aplicación SoundBox.
  *
  * @author José y Ruben
- * @version 2.0
+ * @version 3.0
  */
 public class Main {
 
     /**
-     * Método principal que lanza el menú de consola.
+     * Método principal que lanza la aplicación.
      *
      * @param args argumentos de línea de comandos
      */
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        
-        // Pedir ruta al usuario
-        System.out.println("|        Bienvenido a SoundBox v2.0      |");
-        
-        System.out.print("Introduce la ruta donde guardar los archivos\n(default: datos/catalogo.csv): ");
-        String rutaUsuario = sc.nextLine().trim();
-        
-        // Si está vacío, usar ruta por defecto
-        if (rutaUsuario.isBlank()) {
-            rutaUsuario = "datos/catalogo.csv";
-        }
-         
-        // Asegurar que la ruta acabe en .csv
-        if (!rutaUsuario.endsWith(".csv")) {
-            rutaUsuario = rutaUsuario + ".csv";
-        }
-        
         GestorAlbumes gestor = new GestorAlbumes();
-        GestorFicheros ficheros = new GestorFicheros(rutaUsuario);
-        MenuConsola menu = new MenuConsola(gestor, ficheros);
-        menu.ejecutar();
-        
-        sc.close();
+        GestorFicheros ficheros = new GestorFicheros("datos/catalogo.csv");
+        gestor.getCatalogo().addAll(ficheros.cargar());
+
+        String[] opciones = {"Interfaz gráfica (GUI)", "Consola"};
+        int eleccion = JOptionPane.showOptionDialog(
+                null,
+                "¿Cómo deseas usar SoundBox?",
+                "SoundBox v3.0",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, opciones, opciones[0]);
+
+        if (eleccion == 0) {
+            SwingUtilities.invokeLater(() -> {
+                VentanaPrincipal ventana = new VentanaPrincipal(gestor, ficheros);
+                ventana.setVisible(true);
+            });
+        } else {
+            MenuConsola menu = new MenuConsola(gestor, ficheros);
+            menu.ejecutar();
+        }
     }
 }

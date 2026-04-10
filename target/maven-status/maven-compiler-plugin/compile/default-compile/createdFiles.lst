@@ -1,9 +1,15 @@
+com\equipo\soundbox\gui\VentanaPrincipal$4.class
+com\equipo\soundbox\gui\VentanaPrincipal$3.class
+com\equipo\soundbox\gui\VentanaPrincipal.class
+com\equipo\soundbox\gui\DialogoFormulario.class
+com\equipo\soundbox\modelo\Puntuable.class
+com\equipo\soundbox\persistencia\GestorFicheros.class
+com\equipo\soundbox\gui\VentanaPrincipal$1.class
 com\equipo\soundbox\modelo\Reproducible.class
 com\equipo\soundbox\modelo\Main.class
 com\equipo\soundbox\consola\MenuConsola.class
 com\equipo\soundbox\modelo\AlbumDigital.class
-com\equipo\soundbox\modelo\Puntuable.class
+com\equipo\soundbox\gui\VentanaPrincipal$2.class
 com\equipo\soundbox\modelo\Album.class
-com\equipo\soundbox\persistencia\GestorFicheros.class
 com\equipo\soundbox\modelo\AlbumFisico.class
 com\equipo\soundbox\colecciones\GestorAlbumes.class

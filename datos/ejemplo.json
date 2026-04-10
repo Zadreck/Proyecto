@@ -1,38 +1,137 @@
 [
   {
     "tipo": "Fisico",
-    "titulo": "Dark Side of the Moon",
+    "titulo": "The Dark Side of the Moon",
     "artista": "Pink Floyd",
     "año": 1973,
+    "puntuacion": 9.8,
+    "formato": "Vinilo",
+    "numDiscos": 1
+  },
+  {
+    "tipo": "Fisico",
+    "titulo": "A Night at the Opera",
+    "artista": "Queen",
+    "año": 1975,
+    "puntuacion": 9.7,
+    "formato": "Vinilo",
+    "numDiscos": 1
+  },
+  {
+    "tipo": "Fisico",
+    "titulo": "Thriller",
+    "artista": "Michael Jackson",
+    "año": 1982,
+    "puntuacion": 10.0,
+    "formato": "CD",
+    "numDiscos": 1
+  },
+  {
+    "tipo": "Fisico",
+    "titulo": "Siembra",
+    "artista": "Rubén Blades y Willie Colón",
+    "año": 1978,
+    "puntuacion": 9.6,
+    "formato": "Vinilo",
+    "numDiscos": 1
+  },
+  {
+    "tipo": "Fisico",
+    "titulo": "Comercial",
+    "artista": "Los Ángeles Azules",
+    "año": 1996,
+    "puntuacion": 8.9,
+    "formato": "CD",
+    "numDiscos": 1
+  },
+  {
+    "tipo": "Fisico",
+    "titulo": "El Cantante",
+    "artista": "Héctor Lavoe",
+    "año": 1978,
     "puntuacion": 9.5,
     "formato": "Vinilo",
     "numDiscos": 1
   },
   {
     "tipo": "Fisico",
-    "titulo": "Abbey Road",
-    "artista": "The Beatles",
-    "año": 1969,
-    "puntuacion": 9.8,
+    "titulo": "Obsesión",
+    "artista": "Aventura",
+    "año": 2002,
+    "puntuacion": 9.2,
     "formato": "CD",
     "numDiscos": 1
   },
   {
+    "tipo": "Fisico",
+    "titulo": "Re",
+    "artista": "Café Tacvba",
+    "año": 1994,
+    "puntuacion": 9.3,
+    "formato": "Vinilo",
+    "numDiscos": 1
+  },
+  {
     "tipo": "Digital",
-    "titulo": "Blinding Lights",
-    "artista": "The Weeknd",
-    "año": 2020,
-    "puntuacion": 8.5,
+    "titulo": "Bohemian Rhapsody",
+    "artista": "Queen",
+    "año": 1975,
+    "puntuacion": 9.9,
     "plataforma": "Spotify",
     "bitrate": 320
   },
   {
     "tipo": "Digital",
-    "titulo": "Levitating",
-    "artista": "Dua Lipa",
-    "año": 2020,
-    "puntuacion": 8.0,
+    "titulo": "La Bilirrubina",
+    "artista": "Juan Luis Guerra",
+    "año": 1990,
+    "puntuacion": 9.0,
     "plataforma": "Apple Music",
     "bitrate": 256
+  },
+  {
+    "tipo": "Digital",
+    "titulo": "Lamento Boliviano",
+    "artista": "Enanitos Verdes",
+    "año": 1994,
+    "puntuacion": 8.8,
+    "plataforma": "YouTube Music",
+    "bitrate": 192
+  },
+  {
+    "tipo": "Digital",
+    "titulo": "Corazón Partío",
+    "artista": "Alejandro Sanz",
+    "año": 1997,
+    "puntuacion": 9.1,
+    "plataforma": "Spotify",
+    "bitrate": 320
+  },
+  {
+    "tipo": "Digital",
+    "titulo": "De Música Ligera",
+    "artista": "Soda Stereo",
+    "año": 1990,
+    "puntuacion": 9.4,
+    "plataforma": "Apple Music",
+    "bitrate": 256
+  },
+  {
+    "tipo": "Digital",
+    "titulo": "Propuesta Indecente",
+    "artista": "Romeo Santos",
+    "año": 2013,
+    "puntuacion": 8.7,
+    "plataforma": "Spotify",
+    "bitrate": 320
+  },
+  {
+    "tipo": "Digital",
+    "titulo": "Idilio",
+    "artista": "Willie Colón",
+    "año": 1975,
+    "puntuacion": 9.3,
+    "plataforma": "YouTube Music",
+    "bitrate": 256
   }
-]
+]             

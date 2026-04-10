@@ -20,7 +20,6 @@ import com.equipo.soundbox.modelo.AlbumFisico;
 
 /**
  * Diálogo modal para añadir un nuevo álbum.
- * Construido a mano sin editor visual.
  *
  * @author José y Ruben
  * @version 3.0

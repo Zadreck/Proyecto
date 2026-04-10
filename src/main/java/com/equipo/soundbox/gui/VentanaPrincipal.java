@@ -13,7 +13,6 @@ import java.util.Map;
 
 /**
  * Ventana principal de la aplicación SoundBox con interfaz gráfica Swing.
- * Construida a mano sin editor visual.
  *
  * @author José y Ruben
  * @version 3.0
@@ -48,7 +47,7 @@ public class VentanaPrincipal extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // ── Panel superior: buscador ──────────────────────────
+        // Panel superior: buscador
         JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JLabel etiquetaBuscar = new JLabel("Buscar:");
         campoBusqueda = new JTextField(30);
@@ -70,7 +69,7 @@ public class VentanaPrincipal extends JFrame {
             }
         );
 
-        // ── Tabla central ─────────────────────────────────────
+        // Tabla central 
         String[] columnas = {"Título", "Artista", "Año", "Tipo", "Descripción", "Puntuación"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -83,7 +82,7 @@ public class VentanaPrincipal extends JFrame {
         JScrollPane scroll = new JScrollPane(tabla);
         add(scroll, BorderLayout.CENTER);
 
-        // ── Panel lateral: botones de acción ──────────────────
+        // Panel lateral: botones de acción 
         JPanel panelLateral = new JPanel();
         panelLateral.setLayout(new BoxLayout(panelLateral, BoxLayout.Y_AXIS));
         panelLateral.setBorder(BorderFactory.createEmptyBorder(10, 8, 10, 8));
@@ -116,7 +115,7 @@ public class VentanaPrincipal extends JFrame {
 
         add(panelLateral, BorderLayout.EAST);
 
-        // ── Listeners de todos los botones ────────────────────
+        // Listeners de todos los botones
 
         // ActionListener con CLASE ANÓNIMA — Añadir
         btnAnadir.addActionListener(new ActionListener() {
@@ -326,7 +325,7 @@ public class VentanaPrincipal extends JFrame {
                     "Guardado", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        // ── WindowListener — intercepta el cierre ─────────────
+        //  WindowListener — intercepta el cierre 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
